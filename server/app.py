@@ -14,9 +14,11 @@ migrate = Migrate(app, db)
 
 db.init_app(app)
 
+# Endpoint for handling both GET and POST requests to /messages
 @app.route('/messages', methods=['GET', 'POST'])
 def messages():
     if request.method == 'GET':
+        # Retrieve messages from the database and order them by creation time
         messages = Message.query.order_by('created_at').all()
 
         response = make_response(
@@ -25,12 +27,14 @@ def messages():
         )
     
     elif request.method == 'POST':
+        # Create a new message based on the JSON data received in the request
         data = request.get_json()
         message = Message(
             body=data['body'],
             username=data['username']
         )
 
+        # Add the message to the database and commit the transaction
         db.session.add(message)
         db.session.commit()
 
@@ -41,15 +45,19 @@ def messages():
 
     return response
 
+# Endpoint for handling both PATCH and DELETE requests to /messages/<int:id>
 @app.route('/messages/<int:id>', methods=['PATCH', 'DELETE'])
 def messages_by_id(id):
+    # Retrieve the message with the specified ID from the database
     message = Message.query.filter_by(id=id).first()
 
     if request.method == 'PATCH':
+        # Update the message attributes based on the JSON data received in the request
         data = request.get_json()
         for attr in data:
             setattr(message, attr, data[attr])
             
+        # Add the updated message to the database and commit the transaction
         db.session.add(message)
         db.session.commit()
 
@@ -59,6 +67,7 @@ def messages_by_id(id):
         )
 
     elif request.method == 'DELETE':
+        # Delete the message from the database and commit the transaction
         db.session.delete(message)
         db.session.commit()
 

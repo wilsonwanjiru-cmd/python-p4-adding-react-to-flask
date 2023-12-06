@@ -16,10 +16,23 @@ function NewMessage({ currentUser, onAddMessage }) {
         body: body,
       }),
     })
-      .then((r) => r.json())
+      .then((r) => {
+        // Check for a successful response (status code 200: OK)
+        if (r.ok) {
+          return r.json();
+        }
+        // Throw an error for non-OK responses
+        throw new Error("Failed to create a new message");
+      })
       .then((newMessage) => {
+        // Invoke the onAddMessage function to update the app with the new message
         onAddMessage(newMessage);
+        // Reset the input field after a successful submission
         setBody("");
+      })
+      .catch((error) => {
+        // Handle errors from fetch
+        console.error(error.message);
       });
   }
 

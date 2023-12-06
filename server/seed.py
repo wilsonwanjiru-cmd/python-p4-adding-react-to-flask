@@ -15,19 +15,22 @@ if "Duane" not in usernames:
 
 def make_messages():
 
+    # Delete existing messages from the database
     Message.query.delete()
-    
+
     messages = []
 
     for i in range(20):
+        # Create a new message with a random body and username
         message = Message(
             body=fake.sentence(),
             username=rc(usernames),
         )
         messages.append(message)
 
+    # Add all the new messages to the database and commit the transaction
     db.session.add_all(messages)
-    db.session.commit()        
+    db.session.commit()
 
 if __name__ == '__main__':
     with app.app_context():

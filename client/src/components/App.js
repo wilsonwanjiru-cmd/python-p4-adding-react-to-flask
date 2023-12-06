@@ -12,9 +12,21 @@ function App() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
+    // Update the URL to match your Flask API endpoint
     fetch("http://127.0.0.1:5555/messages")
-      .then((r) => r.json())
-      .then((messages) => setMessages(messages));
+      .then((r) => {
+        // Check for a successful response (status code 200: OK)
+        if (r.ok) {
+          return r.json();
+        }
+        // Throw an error for non-OK responses
+        throw new Error("Failed to fetch messages");
+      })
+      .then((messages) => setMessages(messages))
+      .catch((error) => {
+        // Handle errors from fetch
+        console.error(error.message);
+      });
   }, []);
 
   function handleAddMessage(newMessage) {

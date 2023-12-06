@@ -6,6 +6,7 @@ db = SQLAlchemy()
 class Message(db.Model, SerializerMixin):
     __tablename__ = 'messages'
 
+    # Define model columns
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String)
     username = db.Column(db.String)
